@@ -45,7 +45,7 @@ func (p *PManage) GetTask(id int64) (Task, error) {
 //创建任务
 func (p *PManage) CreateTask(t Task) (int64, error) {
 
-	//校验数据是否合法
+	//校验任务是否合法
 	valid := validation.Validation{}
 	b, err := valid.Valid(&t)
 	if err != nil {
@@ -132,7 +132,7 @@ func (p *PManage) UpdateTask(t Task, field []string) (bool, error) {
 	return false, errors.New("unkonwn error")
 }
 
-//删除任务  数据库标记任务失效，并非真正删除（现在还没有删除已经运行的任务后续可以添加）
+//删除任务  数据库标记任务失效，并非真正删除（正在运行中的任务没有处理）
 func (p *PManage) RemoveTask(id int64) (int64, error) {
 	o := orm.NewOrm()
 	res, err := o.Raw("UPDATE t_task SET Invalid = 1 where id=?", id).Exec()
