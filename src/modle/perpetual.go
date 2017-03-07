@@ -153,10 +153,10 @@ var TaskRuner *PQueue = NewPQueue(MINPQ)
 */
 
 //任务实例生成队列
-var TaskGenerater *DBPQueue = NewDBPQueue("gen")
+var TaskGenerater IPQueue = NewDBPQueue("gen")
 
 //任务实例运行调度队列
-var TaskRuner *DBPQueue = NewDBPQueue("run")
+var TaskRuner IPQueue = NewDBPQueue("run")
 
 //添加任务到生成器队列
 func (p *PManage) PushGenerater(t Task) {
