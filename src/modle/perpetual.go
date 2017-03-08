@@ -168,7 +168,7 @@ func (p *PManage) GeneraterConsume() {
 	for {
 		headValue, _ := TaskGenerater.Pop()
 		if headValue == nil {
-			//do nothing
+			log.Println("got nil one")
 		} else {
 			log.Println("got one")
 			//创建任务实例添加到运行队列

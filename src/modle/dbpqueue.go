@@ -3,6 +3,7 @@ package modle
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/hex"
 	"errors"
 	"log"
 	"time"
@@ -65,9 +66,9 @@ func (t *DbPQueue) Push(task interface{}, priority int64) (int64, error) {
 	if err != nil {
 		return 0, ErrPush
 	}
-
+	log.Println("push the buf:", buf.String())
 	o := orm.NewOrm()
-	res, err := o.Raw("insert into   "+TABLEPRE+t.TableName()+" set done = 0, taskins=?, priority=? ", buf.String(), priority).Exec()
+	res, err := o.Raw("insert into   "+TABLEPRE+t.TableName()+" set done = 0, taskins=?, priority=? ", hex.EncodeToString(buf.Bytes()), priority).Exec()
 	if err != nil {
 		log.Println("db queue insert error ", err)
 		return 0, ErrPush
@@ -110,13 +111,16 @@ func (t *DbPQueue) Pop() (interface{}, error) {
 		}
 		if num == 1 {
 
-			buf := bytes.NewBufferString(itm.Taskins)
+			log.Println("pop from table", itm.Id)
+			bs, _ := hex.DecodeString(itm.Taskins)
+			buf := bytes.NewBuffer(bs)
 			var item DbstoreItem
 			dec := gob.NewDecoder(buf)
 			err := dec.Decode(&item)
-			if err != nil {
-				return item.Data, ErrPush
+			if err == nil {
+				return item.Data, nil
 			}
+			log.Println("pop decode error", err)
 			return nil, ErrPop
 		} else {
 			//有的任务已经更新为ready,影响行数可能为0不用返回error
