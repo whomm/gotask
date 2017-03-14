@@ -13,15 +13,15 @@ import (
 
 //任务运行状态
 const (
-	TS_PENGDING = 0
-	TS_READY    = 1
-	TS_RUN      = 2
-	TS_SUCCESS  = 3
-	TS_FAIL     = 4
-	TS_KILLING  = 5
-	TS_KILLED   = 6
-	TS_CALLING  = 7
-	TS_CALLFAIL = 8
+	TS_PENGDING = iota
+	TS_READY
+	TS_RUN
+	TS_SUCCESS
+	TS_FAIL
+	TS_KILLING
+	TS_KILLED
+	TS_CALLING
+	TS_CALLFAIL
 )
 
 type Instance struct {

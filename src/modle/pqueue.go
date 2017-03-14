@@ -1,3 +1,4 @@
+// 内存优先级队列
 package modle
 
 import (
@@ -100,28 +101,6 @@ func (pq *PQueue) Push(value interface{}, priority int64) {
 
 	log.Println(value)
 }
-
-// Pop and returns the highest/lowest priority item (depending on whether
-// you're using a MINPQ or MAXPQ) from the priority queue
-/*
-func (pq *PQueue) Pop() (interface{}, int64) {
-	pq.Lock()
-	defer pq.Unlock()
-
-	if pq.size() < 1 {
-		return nil, 0
-	}
-
-	var max *item = pq.items[1]
-
-	pq.exch(1, pq.size())
-	pq.items = pq.items[0:pq.size()]
-	pq.elemsCount -= 1
-	pq.sink(1)
-
-	return max.value, max.priority
-}
-*/
 
 // Head returns the highest/lowest priority item (depending on whether
 // you're using a MINPQ or MAXPQ) from the priority queue

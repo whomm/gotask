@@ -6,5 +6,6 @@ import (
 )
 
 func main() {
+	beego.AppPath = "../"
 	beego.Run()
 }

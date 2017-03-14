@@ -41,7 +41,7 @@ func killthejob(taskinstanceid int64) {
 func (myWorker) Run(tasktime int64, taskid int64, taskinstanceid int64, taskinfo string) bool {
 	log.Println(taskinfo)
 	log.Println(tasktime, taskid, taskinstanceid)
-	go dothejob(taskid)
+	go dothejob(taskinstanceid)
 	return true
 }
 

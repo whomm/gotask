@@ -1,3 +1,4 @@
+//数据库优先级队列
 package modle
 
 import (
@@ -22,7 +23,9 @@ var (
 )
 
 func init() {
-
+	gob.Register(DbstoreItem{})
+	gob.Register(Task{})
+	gob.Register(Instance{})
 }
 
 //数据库字段存储数据结构
@@ -66,7 +69,7 @@ func (t *DbPQueue) Push(task interface{}, priority int64) (int64, error) {
 	if err != nil {
 		return 0, ErrPush
 	}
-	log.Println("push the buf:", buf.String())
+
 	o := orm.NewOrm()
 	res, err := o.Raw("insert into   "+TABLEPRE+t.TableName()+" set done = 0, taskins=?, priority=? ", hex.EncodeToString(buf.Bytes()), priority).Exec()
 	if err != nil {
