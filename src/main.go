@@ -1,11 +1,10 @@
 package main
 
 import (
-	_ "./routers"
+	_ "./web/routers"
 	"github.com/astaxie/beego"
 )
 
 func main() {
-	beego.AppPath = "../"
 	beego.Run()
 }

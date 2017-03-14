@@ -3,7 +3,6 @@ package controllers
 import (
 	"../../modle"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
 )
 
 type ApiController struct {
@@ -12,13 +11,12 @@ type ApiController struct {
 
 func init() {
 
-	//设置最大空闲连接
-	//设置最大数据库连接 (go >= 1.2)
-	maxIdle := 30
-	maxConn := 30
-	// set default database
-	orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("mysqlurls"), maxIdle, maxConn)
-	orm.Debug = true
+}
+
+type OutJson struct {
+	Code int64
+	Data interface{}
+	Msg  string
 }
 
 type TaskGropPage struct {
@@ -39,7 +37,12 @@ func (this *ApiController) Tglist() {
 	out.Ps = 0
 	out.Pl = 10
 
-	this.Data["json"] = out
+	j := OutJson{}
+	j.Code = 0
+	j.Data = out
+	j.Msg = ""
+
+	this.Data["json"] = j
 	this.ServeJSON()
 
 }
