@@ -142,3 +142,7 @@ func (Task) GetTaskbyid(id int64) *Task {
 		return nil
 	}
 }
+
+func (m *Task) Query() orm.QuerySeter {
+	return orm.NewOrm().QueryTable(m)
+}

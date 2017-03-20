@@ -2,11 +2,10 @@ package controllers
 
 import (
 	"../../modle"
-	"github.com/astaxie/beego"
 )
 
 type ApiController struct {
-	beego.Controller
+	baseController
 }
 
 func init() {

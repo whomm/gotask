@@ -26,6 +26,7 @@ $(function() {
         if (height < 1) height = 1;
         if (height > topOffset) {
             $("#page-wrapper").css("min-height", (height) + "px");
+            $("#main-content").css("min-height", (height) + "px");
         }
     });
 

@@ -42,7 +42,7 @@
         {{template "navigation" .}}
 
         <div id="page-wrapper">
-           
+           <iframe id="main-content" frameborder=0  width=100% src="/test" name="main-content"></iframe>
         </div>
         <!-- /#page-wrapper -->
 
