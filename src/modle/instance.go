@@ -25,21 +25,22 @@ const (
 )
 
 type Instance struct {
-	Id           int64 `orm:auto`
-	Tid          int64
-	Runtime      int64
-	Tasktime     int64
-	Status       int
-	Createby     string
-	Time_create  int64
-	Time_ready   int64
-	Time_run     int64
-	Time_success int64
-	Time_fail    int64
-	Time_killing int64
-	Time_killed  int64
-	Relaystatus  string
-	Calltime     int64
+	Id            int64 `orm:auto`
+	Tid           int64
+	Runtime       int64
+	Tasktime      int64
+	Status        int
+	Createby      int64
+	Time_create   int64
+	Time_ready    int64
+	Time_run      int64
+	Time_success  int64
+	Time_fail     int64
+	Time_callfail int64
+	Time_killing  int64
+	Time_killed   int64
+	Relaystatus   string
+	Calltime      int64
 }
 
 const (
@@ -61,7 +62,7 @@ func (t *Instance) TableName() string {
 }
 
 //创建
-func (Instance) Create(runtime int64, tasktime int64, tid int64, createby string) (*Instance, error) {
+func (Instance) Create(runtime int64, tasktime int64, tid int64, createby int64) (*Instance, error) {
 	its := Instance{Tid: tid, Runtime: runtime, Tasktime: tasktime, Createby: createby, Status: 0, Time_create: time.Now().Unix()}
 	o := orm.NewOrm()
 	id, err := o.Insert(&its)
@@ -524,4 +525,8 @@ func (its *Instance) Killed() (int64, error) {
 	}
 	return num, err
 
+}
+
+func (m *Instance) Query() orm.QuerySeter {
+	return orm.NewOrm().QueryTable(m)
 }

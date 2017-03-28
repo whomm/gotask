@@ -14,5 +14,10 @@
 - [系统设计](http://note.youdao.com/)
 - [wiki](http://www.baidu.com)
 ## 联系
-ii
-dsf
+
+## 前端界面依赖
+- sbadmin https://github.com/BlackrockDigital/startbootstrap-sb-admin-2
+bower install BlackrockDigital/startbootstrap-sb-admin-2#latest --save
+- datetimepicker： http://eonasdan.github.io/bootstrap-datetimepicker/Installing/
+bower install eonasdan-bootstrap-datetimepicker#latest --save
+

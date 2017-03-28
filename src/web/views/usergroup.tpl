@@ -42,7 +42,7 @@
                         <h1 class="page-header"></h1>
                         <div class="panel panel-default">
                         <div class="panel-heading">
-                            Task list
+                            User group list
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -50,7 +50,7 @@
                             <div class="row form-inline" >
                                 <div class="col-sm-6" >
                                     <div class="dataTables_length" >
-                                        <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/taskupdate';">Create</button>
+                                        <button type="button" class="btn btn-primary btn-sm">Create</button>
                                         <!--
                                         <label>Show 
                                             <select name="dataTables-example_length"  class="form-control input-sm">
@@ -80,14 +80,9 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Name</th>
-                                            <th>CreateUser</th>
-                                            <th>TaskGroup</th>
-                                            
-                                            <th>Crontab</th>
-                                            <th>NextRun</th>
-                                            <th>Invalid</th>
+                                            <th>Level</th>
                                             <th>Edit</th>
-                                            <th>Instance</th>
+                                 
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -95,14 +90,8 @@
                                         <tr>
                                             <td>{{.Id}}</td>
                                             <td>{{.Name}}</td>
-                                            <td>{{.Uid}}</td>
-                                            <td>{{.Tgid}}</td>
-                                            
-                                            <td>{{.Crontab}}</td>
-                                            <td>{{ .Nextrun | uinttodate }}</td>
-                                            <td>{{.Invalid}}</td>
-                                            <td><a href="/taskupdate?id={{.Id}}">Edit</a></td>
-                                            <td><a href="/taskinslist?tid={{.Id}}">More</a></td>
+                                            <td>{{.Level}}</td>
+                                            <td><a href="/#?id={{.Id}}">Edit</a></td>
                                         </tr>
                                         {{end}}
                                         

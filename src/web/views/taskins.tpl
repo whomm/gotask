@@ -42,7 +42,7 @@
                         <h1 class="page-header"></h1>
                         <div class="panel panel-default">
                         <div class="panel-heading">
-                            Task list
+                            {{.taskinfo.Name}}
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -50,27 +50,14 @@
                             <div class="row form-inline" >
                                 <div class="col-sm-6" >
                                     <div class="dataTables_length" >
-                                        <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/taskupdate';">Create</button>
-                                        <!--
-                                        <label>Show 
-                                            <select name="dataTables-example_length"  class="form-control input-sm">
-                                                <option value="10">10</option>
-                                                <option value="25">25</option>
-                                                <option value="50">50</option>
-                                                <option value="100">100</option>
-                                            </select> entries
-                                        </label>
-                                        -->
+                                        <form action="" method="get">
+                                            starttime: endtime:
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='/taskupdate';">Create</button>
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="col-sm-6" style="text-align: right">
-                                    <form action="" method="get">
-                                    <div id="dataTables-example_filter" class="dataTables_filter">
-                                        <label>Search:
-                                            <input type="search" class="form-control input-sm" placeholder="" name="keyword" >
-                                        </label>
-                                    </div>
-                                    </form>
+                                    
                                 </div>
                             </div>
 
@@ -79,30 +66,45 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Name</th>
-                                            <th>CreateUser</th>
-                                            <th>TaskGroup</th>
-                                            
-                                            <th>Crontab</th>
-                                            <th>NextRun</th>
-                                            <th>Invalid</th>
-                                            <th>Edit</th>
-                                            <th>Instance</th>
+                                            <th>Runtime</th>
+                                            <th>Tasktime</th>
+                                            <th>Status</th>
+                                            <th>Createby</th>
+                                            <th></th>
+                                            <td>Calltime</td>
+                                          
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {{range .list}}
                                         <tr>
                                             <td>{{.Id}}</td>
-                                            <td>{{.Name}}</td>
-                                            <td>{{.Uid}}</td>
-                                            <td>{{.Tgid}}</td>
-                                            
-                                            <td>{{.Crontab}}</td>
-                                            <td>{{ .Nextrun | uinttodate }}</td>
-                                            <td>{{.Invalid}}</td>
-                                            <td><a href="/taskupdate?id={{.Id}}">Edit</a></td>
-                                            <td><a href="/taskinslist?tid={{.Id}}">More</a></td>
+                                            <td>{{ .Runtime | int64todate }}</td>
+                                            <td>{{ .Tasktime | int64todate }}</td>
+                                            <td>{{if eq .Status  0 }}     PENGDING 
+                                                {{else if eq .Status  1}} READY
+                                                {{else if eq .Status  2}} RUN
+                                                {{else if eq .Status  3}} SUCCESS
+                                                {{else if eq .Status  4}} FAIL
+                                                {{else if eq .Status  5}} KILLING
+                                                {{else if eq .Status  6}} KILLED
+                                                {{else if eq .Status  7}} CALLING
+                                                {{else if eq .Status  8}} CALLFAIL
+                                                {{else if eq .Status  9}} READY
+                                                {{end}}
+                                            </td>
+                                            <td>{{if le .Createby  0 }} sys {{else}} ww {{end}}</td>   
+                                            <td>
+                                               {{if gt .Time_create  0 }} create: {{ .Time_create|int64todate }} / {{end}} 
+                                              {{if gt .Time_ready  0 }}ready: {{ .Time_ready|int64todate }}/{{end}}
+                                              {{if gt .Time_run  0 }}run: {{ .Time_run|int64todate }}/{{end}}
+                                              {{if gt .Time_success  0 }} success: {{ .Time_success|int64todate }}/{{end}}
+                                              {{if gt .Time_fail  0 }}fail: {{ .Time_fail|int64todate }}/{{end}}
+                                              {{if gt .Time_callfail  0 }}callfail: {{ .Time_callfail|int64todate }}/{{end}}
+                                              {{if gt .Time_killing  0 }}killing: {{ .Time_killing|int64todate }}/{{end}}
+                                              {{if gt .Time_killed  0 }}killed: {{ .Time_killed|int64todate }}{{end}}
+                                              </td>
+                                            <td>{{.Calltime}}</td>
                                         </tr>
                                         {{end}}
                                         

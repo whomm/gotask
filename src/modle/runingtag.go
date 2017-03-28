@@ -29,7 +29,7 @@ func (t *Runingtag) TableName() string {
 }
 
 //创建任务运行标记,已确保只有一个处于运行状态
-func (Runingtag) Create(runtime int64, tasktime int64, tid int64, createby string) (*Instance, error) {
+func (Runingtag) Create(runtime int64, tasktime int64, tid int64, createby int64) (*Instance, error) {
 	tg := Runingtag{Tid: tid, Tasktime: tasktime, Status: 0}
 	its := Instance{Tid: tid, Runtime: runtime, Tasktime: tasktime, Createby: createby, Status: 0, Time_create: time.Now().Unix()}
 

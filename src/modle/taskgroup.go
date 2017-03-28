@@ -59,3 +59,15 @@ func (m *TaskGroup) GetList(page int64, pagesize int64) []*TaskGroup {
 	info.Query().OrderBy("id").Limit(pagesize, page*pagesize).All(&list)
 	return list
 }
+
+func (m *TaskGroup) GetAllByUgid(ugid int64) []*TaskGroup {
+
+	var list []*TaskGroup
+	query := m.Query()
+	query = query.Filter("ugid__eq", ugid)
+	count, _ := query.Count()
+	if count > 0 {
+		query.OrderBy("-Id").All(&list)
+	}
+	return list
+}

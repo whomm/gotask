@@ -210,7 +210,7 @@ func (p *PManage) GeneraterConsume() {
 func (p *PManage) PushRuner(t Task) {
 
 	//创建任务实例 Runingtag确保活动状态任务唯一
-	r, err := (Runingtag{}).Create(int64(t.Nextrun+t.Pendingtime), int64(t.Nextrun), t.Id, "")
+	r, err := (Runingtag{}).Create(int64(t.Nextrun+t.Pendingtime), int64(t.Nextrun), t.Id, 0)
 	if err != nil {
 		//记录一下错误的类型
 		log.Println("create run tag && instance error ", err)
