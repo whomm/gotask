@@ -3,11 +3,12 @@ package modle
 import (
 	"encoding/json"
 	"errors"
-	"log"
+
 	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
 	hprose "github.com/hprose/hprose-go"
@@ -21,10 +22,12 @@ func init() {
 	maxConn := 30
 	// set default database
 	orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("mysqlurls"), maxIdle, maxConn)
-	orm.Debug = true
+	orm.Debug = false
+
 }
 
-type PManage struct{}
+type PManage struct {
+}
 
 //获取任务
 func (p *PManage) GetTask(id int64) (Task, error) {
@@ -55,7 +58,7 @@ func (p *PManage) CreateTask(t Task) (int64, error) {
 	if !b {
 		einfo := ""
 		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
+			logs.Info("%s, %s", err.Key, err.Message)
 			einfo = einfo + err.Key + err.Message + "; "
 		}
 		return 0, errors.New(einfo)
@@ -84,7 +87,7 @@ func (p *PManage) CreateTask(t Task) (int64, error) {
 
 		if t.Nextrun < t.Endtime {
 			p.PushGenerater(t)
-			log.Println("add to queue[create]")
+			logs.Debug("add to queue[create]")
 			return id, nil
 		} else {
 			return id, nil
@@ -124,7 +127,7 @@ func (p *PManage) UpdateTask(t Task, field []string) (bool, error) {
 
 		if t.Nextrun < t.Endtime {
 			p.PushGenerater(t)
-			log.Println("add to queue[update]")
+			logs.Debug("add to queue[update]")
 			return true, nil
 		}
 		return true, nil
@@ -168,14 +171,14 @@ func (p *PManage) GeneraterConsume() {
 	for {
 		headValue, _ := TaskGenerater.Pop()
 		if headValue == nil {
-			log.Println("got nil one")
+			logs.Debug("got nil one")
 		} else {
-			log.Println("got one")
+			logs.Debug("got one")
 			//创建任务实例添加到运行队列
 			task, err := p.GetTask(headValue.(Task).Id)
 			if err != nil {
 				//获取不到任务
-				log.Println("get task err", err)
+				logs.Error("get task err %s", err)
 
 			} else {
 				if task.Invalid == 1 ||
@@ -184,10 +187,10 @@ func (p *PManage) GeneraterConsume() {
 					task.Crontab == "" ||
 					task.Crontab != headValue.(Task).Crontab {
 					//任务被更新过可以丢弃了
-					log.Println(headValue.(Task).Name + " [time]" + time.Unix(int64(headValue.(Task).Nextrun), 0).Format("2006-01-02 15:04:05") + " [invalide]")
+					logs.Debug(headValue.(Task).Name + " [time]" + time.Unix(int64(headValue.(Task).Nextrun), 0).Format("2006-01-02 15:04:05") + " [invalide]")
 				} else {
 					go p.PushRuner(headValue.(Task))
-					log.Println(headValue.(Task).Name + " [time]" + time.Unix(int64(headValue.(Task).Nextrun), 0).Format("2006-01-02 15:04:05") + " [push to runing queue]")
+					logs.Debug(headValue.(Task).Name + " [time]" + time.Unix(int64(headValue.(Task).Nextrun), 0).Format("2006-01-02 15:04:05") + " [push to runing queue]")
 
 					//用上一个任务的运行时间生成下一个运行时间，防止漏掉某个时间点
 					task.UpdateNextRuntime(int64(headValue.(Task).Nextrun))
@@ -213,7 +216,7 @@ func (p *PManage) PushRuner(t Task) {
 	r, err := (Runingtag{}).Create(int64(t.Nextrun+t.Pendingtime), int64(t.Nextrun), t.Id, 0)
 	if err != nil {
 		//记录一下错误的类型
-		log.Println("create run tag && instance error ", err)
+		logs.Error("create run tag && instance error %s ", err)
 
 	} else {
 		TaskRuner.Push(*r, int64(t.Nextrun+t.Pendingtime))
@@ -228,12 +231,12 @@ func (p *PManage) RunerConsume() {
 		if headValue == nil {
 			//continue
 		} else {
-			log.Println("[run]got one to run")
+			logs.Debug("[run]got one to run")
 			//获取到需要运行的任务
 			task, err := p.GetTask(headValue.(Instance).Tid)
 			if err == nil {
 
-				log.Println("[run] " + task.Name + " [time+pendding]" + time.Unix(int64(headValue.(Instance).Runtime), 0).Format("2006-01-02 15:04:05") + " [time]" + time.Unix(int64(headValue.(Instance).Tasktime), 0).Format("2006-01-02 15:04:05"))
+				logs.Debug("[run] " + task.Name + " [time+pendding]" + time.Unix(int64(headValue.(Instance).Runtime), 0).Format("2006-01-02 15:04:05") + " [time]" + time.Unix(int64(headValue.(Instance).Tasktime), 0).Format("2006-01-02 15:04:05"))
 
 				go p.checkrelayandrun(headValue.(Instance), task)
 
@@ -270,7 +273,7 @@ func (p *PManage) notifyclientkill(taskinstanceid int64, taskid int64) error {
 
 		defer func() {
 			if r := recover(); r != nil {
-				log.Println("call rpc  error", r)
+				logs.Error("call rpc  error %s", r)
 				//通知失败了
 				//to do retry
 			}
@@ -281,11 +284,11 @@ func (p *PManage) notifyclientkill(taskinstanceid int64, taskid int64) error {
 			client.UseService(&ro)
 
 			if ro.Kill(taskinstanceid) {
-				log.Println("call work to kill job success")
+				logs.Debug("call work to kill job success")
 
 				return nil
 			} else {
-				log.Println("call worker to kill job  error")
+				logs.Error("call worker to kill job  error")
 
 				return errors.New("call worker to kill job  error")
 
@@ -351,7 +354,7 @@ func (p *PManage) checkrelayandrun(its Instance, taskinfo Task) {
 	}
 	if killed {
 
-		log.Println("[killed not to recall  client] " + taskinfo.Name + " [time+pendding]" + time.Unix(int64(its.Runtime), 0).Format("2006-01-02 15:04:05") + " [time]" + time.Unix(int64(its.Tasktime), 0).Format("2006-01-02 15:04:05"))
+		logs.Debug("[killed not to recall  client] " + taskinfo.Name + " [time+pendding]" + time.Unix(int64(its.Runtime), 0).Format("2006-01-02 15:04:05") + " [time]" + time.Unix(int64(its.Tasktime), 0).Format("2006-01-02 15:04:05"))
 
 		return
 	}
@@ -359,7 +362,7 @@ func (p *PManage) checkrelayandrun(its Instance, taskinfo Task) {
 	//通知客户端网络异常处理
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("call to run error:", r)
+			logs.Error("call to run error: %s", r)
 			if r.(error).Error() == "recall" {
 				//调用异常可以重试
 				//增加一下运行时间 5 秒，增加调用次数，重新去排队 100次重试可以标记为callfail
@@ -382,7 +385,7 @@ func (p *PManage) checkrelayandrun(its Instance, taskinfo Task) {
 		//更新ready
 		err := its.UpdateReady()
 		if err != nil {
-			log.Println(err)
+			logs.Error(err)
 			//更新任务失败 可能被杀死了 也可能是数据库错误 过5m再调用一下
 			TaskRuner.Push(its, time.Now().Unix()+5)
 			return

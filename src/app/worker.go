@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	hprose "github.com/hprose/hprose-go"
 )
 
@@ -39,20 +40,21 @@ func killthejob(taskinstanceid int64) {
 }
 
 func (myWorker) Run(tasktime int64, taskid int64, taskinstanceid int64, taskinfo string) bool {
-	log.Println(taskinfo)
+	logs.Debug(taskinfo)
 	log.Println(tasktime, taskid, taskinstanceid)
 	go dothejob(taskinstanceid)
 	return true
 }
 
 func (myWorker) Kill(taskinstanceid int64) bool {
-	log.Println("kill : %v", taskinstanceid)
+	logs.GetLogger("WORK").Println("kill : %v", taskinstanceid)
 	go killthejob(taskinstanceid)
 	return true
 
 }
 
 func main() {
+	logs.SetLogger(logs.AdapterFile, `{"filename":"worker.log","level":7,"maxlines":0,"maxsize":0,"daily":true,"maxdays":10}`)
 	service := hprose.NewHttpService()
 	service.AddMethods(myWorker{})
 	http.ListenAndServe(":8912", service)

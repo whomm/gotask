@@ -161,6 +161,7 @@ func (this *MainController) TaskList() {
 
 type ServerFunc struct {
 	RpcCreateTask func(str string) (int64, error)
+	RpcUpdateTask func(str string, fields string) (bool, error)
 }
 
 func (this *MainController) TaskSave() {
@@ -184,6 +185,9 @@ func (this *MainController) TaskSave() {
 	extval := this.GetStrings("extval[]")
 	extkey := this.GetStrings("extkey[]")
 	for i, v := range extkey {
+		if len(strings.Trim(v, "\n ")) == 0 {
+			continue
+		}
 		ext[v] = extval[i]
 	}
 	extb, _ := json.Marshal(ext)
@@ -199,11 +203,21 @@ func (this *MainController) TaskSave() {
 	client := hprose.NewClient("http://127.0.0.1:8911/")
 	var ro *ServerFunc
 	client.UseService(&ro)
-	id, err := ro.RpcCreateTask(string(ib))
-	if id > 0 && err == nil {
-		this.Redirect("/tasklist", 302)
+
+	if item.Id < 1 {
+		id, err := ro.RpcCreateTask(string(ib))
+		if id > 0 && err == nil {
+			this.Redirect("/tasklist", 302)
+		} else {
+			this.showmsg(err.Error())
+		}
 	} else {
-		this.showmsg(err.Error())
+		id, err := ro.RpcUpdateTask(string(ib), "")
+		if id && err == nil {
+			this.Redirect("/tasklist", 302)
+		} else {
+			this.showmsg(err.Error())
+		}
 	}
 
 }
@@ -212,9 +226,34 @@ func (this *MainController) TaskUpdate() {
 
 	var tg modle.TaskGroup
 	var tglist []*modle.TaskGroup
+	var taskinfo *modle.Task
 	tglist = tg.GetAllByUgid(this.mygroup.Id)
 	this.Data["tglist"] = tglist
-	this.TplName = "taskcreate.tpl"
+	taskid, ok := this.GetInt64("id")
+	if ok == nil {
+		var tk modle.Task
+		taskinfo = tk.GetTaskbyid(taskid)
+
+		this.Data["taskinfo"] = taskinfo
+		ext := make(map[string]string)
+		ok = json.Unmarshal([]byte(taskinfo.Extra), &ext)
+		type ExtX struct {
+			Key string
+			Val string
+		}
+		var extarray []ExtX
+		if ok == nil {
+			for k, v := range ext {
+				extarray = append(extarray, ExtX{Key: k, Val: v})
+			}
+		}
+
+		this.Data["taskinfoext"] = extarray
+		this.TplName = "taskupdate.tpl"
+	} else {
+		this.TplName = "taskcreate.tpl"
+	}
+
 }
 
 func (this *MainController) TaskInsList() {

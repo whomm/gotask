@@ -51,7 +51,7 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Create a task
+                            Modify a task
                         </div>
                         <div class="panel-body">
                              <div class="row">
@@ -59,9 +59,10 @@
 
                                 
                                      <form role="form" action="/tasksave" method="get" >
+                                     <input type="hidden" name="id" value="{{.taskinfo.Id}}">
                                       <div class="form-group">
                                             <label>Name:</label>
-                                            <input class="form-control" placeholder="OnlineUserCount" name="name">
+                                            <input class="form-control" placeholder="OnlineUserCount" name="name" value="{{.taskinfo.Name}}">
                                             <p class="help-block">Task name.</p>
                                         </div>
                                         <div class="form-group">
@@ -69,19 +70,19 @@
                                             
                                             <select class="form-control" name="tgid">
                                             {{range .tglist}}
-                                                <option value="{{.Id}}">{{.Name}}</option>
+                                                <option value="{{.Id}}" {{if  eq .Id $.taskinfo.Tgid}}{{end}} >{{.Name}}</option>
                                             {{end}}
                                             </select>
                                             <p class="help-block">Chose a group to classify tasks.</p>
                                         </div>
                                         <div class="form-group">
                                             <label>Crontab</label>
-                                            <input class="form-control" placeholder="5 * * * * *" name="crontab">
+                                            <input class="form-control" placeholder="5 * * * * *" name="crontab" value="{{.taskinfo.Crontab}}">
                                             <p class="help-block">Same as crontab.</p>
                                         </div>
                                         <div class="form-group">
                                             <label>Pending</label>
-                                            <input class="form-control" placeholder="30" name="pendingtime">
+                                            <input class="form-control" placeholder="30" name="pendingtime" value="{{.taskinfo.Pendingtime}}">
                                             <p class="help-block">wait seconds after crontab set</p>
                                         </div>
 
@@ -89,7 +90,7 @@
                                        <div class="form-group">
                                             <label>Start</label>
                                             <div class='input-group date' id='starttime'>
-                                                <input type='text' class="form-control" name="starttime" />
+                                                <input type='text' class="form-control" name="starttime" value="{{.taskinfo.Starttime | uinttodate}}" />
                                                 <span class="input-group-addon">
                                                     <span class="glyphicon glyphicon-calendar"></span>
                                                 </span>
@@ -98,7 +99,7 @@
                                         <div class="form-group">
                                             <label>End</label>
                                             <div class='input-group date' id='endtime'>
-                                                <input type='text' class="form-control" name="endtime" />
+                                                <input type='text' class="form-control" name="endtime" value="{{.taskinfo.Endtime | uinttodate}}"/>
                                                 <span class="input-group-addon">
                                                     <span class="glyphicon glyphicon-calendar"></span>
                                                 </span>
@@ -111,16 +112,32 @@
                                         <div class="form-group extform">
                                             <label>Extra</label>
                                             {
-                                            <div class="extitem form-group input-group">
-                                                <div class=" input-group">
-                                                    <input class="form-control" name="extkey[]" type="text" placeholder="workrpc" />
-                                                    <span class="input-group-addon">:</span>
-                                                    <input class="form-control" name="extval[]" type="text" placeholder="http://127.0.0.1:8912" />
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-default btn-add" type="button">
-                                                            <span class="glyphicon glyphicon-plus"></span>
-                                                        </button>
-                                                    </span>
+                                            
+                                                {{range .taskinfoext}}
+                                                <div class="extitem form-group input-group">
+                                                    <div class=" input-group">
+                                                        <input class="form-control" name="extkey[]" type="text" placeholder="workrpc"  value="{{.Key}}" />
+                                                        <span class="input-group-addon">:</span>
+                                                        <input class="form-control" name="extval[]" type="text" placeholder="http://127.0.0.1:8912" value="{{.Val}}" />
+                                                        <span class="input-group-btn">
+                                                            <button class="btn btn-default btn-remove" type="button">
+                                                                <span class="glyphicon glyphicon-minus"></span>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                {{end}}
+                                                <div class="extitem form-group input-group">
+                                                    <div class=" input-group">
+                                                        <input class="form-control" name="extkey[]" type="text" placeholder="workrpc" />
+                                                        <span class="input-group-addon">:</span>
+                                                        <input class="form-control" name="extval[]" type="text" placeholder="http://127.0.0.1:8912" />
+                                                        <span class="input-group-btn">
+                                                            <button class="btn btn-default btn-add" type="button">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </button>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 
                                             </div>
@@ -133,17 +150,17 @@
                                         <div class="form-group">
                                             <label>Invalid</label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="invalid" id="optionsRadiosInline1" value="0" checked="">False
+                                                <input type="radio" name="invalid" id="optionsRadiosInline1" value="0" {{if  eq 0 $.taskinfo.Invalid}}checked{{end}}>False
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="invalid" id="optionsRadiosInline2" value="1">True
+                                                <input type="radio" name="invalid" id="optionsRadiosInline2" value="1" {{if  eq 1 $.taskinfo.Invalid}}checked{{end}}>True
                                             </label>
                                            
                                         </div>
 
                                         <div class="form-group">
                                             <label>Relay</label>
-                                            <textarea class="form-control" rows="3" name="relay" value='{"rl":[]}'></textarea>
+                                            <textarea class="form-control" rows="3" name="relay" value="{{.taskinfo.Relay}}"></textarea>
                                         </div>
 
                                         
@@ -201,23 +218,25 @@
             $(document).on('click', '.btn-add', function(e)
             {
                 e.preventDefault();
-               
+             
                 var controlForm = $('.extform '),
-                    currentEntry = $(this).parents().parents('.extitem:first'),
-                    newEntry = $(currentEntry.clone()).appendTo(controlForm);
+                currentEntry = $(this).parents().parents('.extitem:first'),
+                newEntry = $(currentEntry.clone()).appendTo(controlForm);
 
                 newEntry.find('input').val('');
-                controlForm.find('.extitem:not(:last) .btn-add')
-                    .removeClass('btn-add').addClass('btn-remove').html('<span class="glyphicon glyphicon-minus"></span>');
+                controlForm.find('.extitem:not(:last) .btn-add').removeClass('btn-add').addClass('btn-remove').html('<span class="glyphicon glyphicon-minus"></span>');
                    
                     
             }).on('click', '.btn-remove', function(e)
             {
-                $(this).parents('.extitem:first').remove();
-
+                $(this).parent().parent().parent().remove();
                 e.preventDefault();
                 return false;
             });
+
+
+          
+
 
         });
     </script>

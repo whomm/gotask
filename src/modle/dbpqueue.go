@@ -6,9 +6,10 @@ import (
 	"encoding/gob"
 	"encoding/hex"
 	"errors"
-	"log"
+
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -73,14 +74,14 @@ func (t *DbPQueue) Push(task interface{}, priority int64) (int64, error) {
 	o := orm.NewOrm()
 	res, err := o.Raw("insert into   "+TABLEPRE+t.TableName()+" set done = 0, taskins=?, priority=? ", hex.EncodeToString(buf.Bytes()), priority).Exec()
 	if err != nil {
-		log.Println("db queue insert error ", err)
+		logs.Error("db queue insert error %s", err)
 		return 0, ErrPush
 	} else {
 		id, err := res.LastInsertId()
 		if err == nil {
 			return id, nil
 		} else {
-			log.Println("db queue insert error  error", err)
+			logs.Error("db queue insert error  error %s", err)
 			return 0, ErrPush
 		}
 	}
@@ -103,18 +104,18 @@ func (t *DbPQueue) Pop() (interface{}, error) {
 	res, err := o.Raw("update  "+TABLEPRE+t.TableName()+" set done = 1  where id=?", itm.Id).Exec()
 	if err != nil {
 		err = o.Rollback()
-		log.Println("db queue get update table error", err)
+		logs.Error("db queue get update table error %s", err)
 		return nil, ErrPop
 	} else {
 		num, _ := res.RowsAffected()
 		err = o.Commit()
 		if err != nil {
-			log.Println("db queue get transaction error", err)
+			logs.Error("db queue get transaction error %s", err)
 			return nil, ErrPop
 		}
 		if num == 1 {
 
-			log.Println("pop from table", itm.Id)
+			logs.Info("pop from table %d", itm.Id)
 			bs, _ := hex.DecodeString(itm.Taskins)
 			buf := bytes.NewBuffer(bs)
 			var item DbstoreItem
@@ -123,7 +124,7 @@ func (t *DbPQueue) Pop() (interface{}, error) {
 			if err == nil {
 				return item.Data, nil
 			}
-			log.Println("pop decode error", err)
+			logs.Info("pop decode error %s", err)
 			return nil, ErrPop
 		} else {
 			//有的任务已经更新为ready,影响行数可能为0不用返回error

@@ -1,11 +1,13 @@
 package main
 
 import (
+	"net/http"
 	"time"
 
 	md "./modle"
 	_ "./web/routers"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	_ "github.com/go-sql-driver/mysql"
 	hprose "github.com/hprose/hprose-go"
 )
@@ -19,11 +21,15 @@ func uinttodate(in uint) (out string) {
 
 }
 
+func init() {
+	logs.SetLogger(logs.AdapterFile, `{"filename":"project.log","level":7,"maxlines":0,"maxsize":0,"daily":true,"maxdays":10}`)
+}
+
 func main() {
 
 	pm := md.PManage{}
-	//go pm.GeneraterConsume()
-	//go pm.RunerConsume()
+	go pm.GeneraterConsume()
+	go pm.RunerConsume()
 
 	service := hprose.NewHttpService()
 	service.AddFunction("RpcCreateTask", pm.RpcCreateTask)
@@ -35,7 +41,7 @@ func main() {
 	service.AddFunction("RpcFailTask", pm.RpcFailTask)
 	service.AddFunction("RpcKilledTask", pm.RpcKilledTask)
 
-	//go http.ListenAndServe(":8911", service)
+	go http.ListenAndServe(":8911", service)
 
 	beego.AddFuncMap("int64todate", int64todate)
 	beego.AddFuncMap("uinttodate", uinttodate)

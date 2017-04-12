@@ -3,9 +3,10 @@ package modle
 import (
 	"encoding/json"
 	"errors"
-	"log"
+
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 	hprose "github.com/hprose/hprose-go"
@@ -339,7 +340,7 @@ func (its *Instance) Calltorun(taskinfo Task) error {
 	//定义一个运行异常处理函数，用于通知上层重跑的
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println(r)
+			logs.Error(r)
 			err = o.Rollback()
 			if err != nil {
 				//panic(err)
@@ -389,7 +390,7 @@ func (its *Instance) Calltorun(taskinfo Task) error {
 					}
 
 					if ro.Run(its.Tasktime, its.Tid, its.Id, string(jtinfo)) {
-						log.Println("call work success set job success")
+						logs.Debug("call work success set job success")
 						//通知成功了
 						res, err := o.Raw("update t_instance set status=? where id = ? and  status in (?)", TS_RUN, its.Id, TS_CALLING).Exec()
 						if err != nil {
@@ -397,7 +398,8 @@ func (its *Instance) Calltorun(taskinfo Task) error {
 							//这个时候不知道怎么处理了
 							//todo
 						}
-						log.Println(res.RowsAffected())
+						r, _ := res.RowsAffected()
+						logs.Debug("RowsAffected:%d", r)
 
 					} else {
 						//panic(errors.New("call worker error"))
