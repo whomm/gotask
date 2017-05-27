@@ -12,23 +12,28 @@ import (
 	"../../modle"
 )
 
+const TASKCTLURL string := "http://127.0.0.1:8911/"
+
 type MainController struct {
 	baseController
 }
 
+//任务主页面
 func (c *MainController) Index() {
 	c.Data["adminid"] = c.userid
 	c.Data["Username"] = c.username + "/" + c.mygroup.Name
-	c.Data["Website"] = "beego.me"
-	c.Data["Email"] = "astaxie@gmail.com"
+	c.Data["Website"] = "http://github.com/whomm"
+	c.Data["Email"] = "lacing@126.com"
 	c.TplName = "index.tpl"
 }
+//
 func (c *MainController) Test() {
-	c.Data["Website"] = "beego.me"
-	c.Data["Email"] = "astaxie@gmail.com"
+	c.Data["Website"] = "http://github.com/whomm"
+	c.Data["Email"] = "lacing@126.com"
 	c.TplName = "test.tpl"
 }
 
+//用户登录页面
 func (this *MainController) Login() {
 	if this.IsPost() {
 		name := strings.TrimSpace(this.GetString("name"))
@@ -42,12 +47,6 @@ func (this *MainController) Login() {
 			if user.Read("name") != nil || user.Password != modle.Md5(password) {
 				info = "帐号或密码错误..."
 			} else {
-				/*
-					user.Logintimes += 1
-					user.Lastloginip = this.getClientIp()
-					user.Lastlogintime = this.getTime()
-					user.Update()
-				*/
 				authKey := modle.Md5("whomm|" + user.Password)
 				this.Ctx.SetCookie("auth", strconv.FormatInt(user.Id, 10)+"|"+authKey)
 				this.Redirect("/", 302)
@@ -59,12 +58,14 @@ func (this *MainController) Login() {
 	this.TplName = "login.tpl"
 }
 
+//登出页
 func (this *MainController) Logout() {
 
 	this.Ctx.SetCookie("auth", "")
 	this.Ctx.WriteString("<script>top.location.href='" + this.loginurl + "'</script>")
 }
 
+//任务组列表页
 func (this *MainController) TaskGroupList() {
 
 	var (
@@ -112,6 +113,7 @@ func (this *MainController) TaskGroupList() {
 	this.TplName = "taskgroup.tpl"
 }
 
+//任务列表页
 func (this *MainController) TaskList() {
 
 	var (
@@ -159,11 +161,13 @@ func (this *MainController) TaskList() {
 	this.TplName = "task.tpl"
 }
 
+//任务创建和更新的rpc接口
 type ServerFunc struct {
 	RpcCreateTask func(str string) (int64, error)
 	RpcUpdateTask func(str string, fields string) (bool, error)
 }
 
+//更新或创建任务操作
 func (this *MainController) TaskSave() {
 
 	var item modle.Task
@@ -200,7 +204,7 @@ func (this *MainController) TaskSave() {
 	ib, _ := json.Marshal(item)
 
 	//callback finish
-	client := hprose.NewClient("http://127.0.0.1:8911/")
+	client := hprose.NewClient(TASKCTLURL)
 	var ro *ServerFunc
 	client.UseService(&ro)
 
@@ -221,7 +225,7 @@ func (this *MainController) TaskSave() {
 	}
 
 }
-
+//任务创建或更新页面
 func (this *MainController) TaskUpdate() {
 
 	var tg modle.TaskGroup
@@ -256,6 +260,7 @@ func (this *MainController) TaskUpdate() {
 
 }
 
+//任务运行记录或实例列表
 func (this *MainController) TaskInsList() {
 
 	var (
@@ -307,6 +312,7 @@ func (this *MainController) TaskInsList() {
 	this.TplName = "taskins.tpl"
 }
 
+//用户组列表
 func (this *MainController) UserGroupList() {
 
 	var (
@@ -353,6 +359,7 @@ func (this *MainController) UserGroupList() {
 	this.TplName = "usergroup.tpl"
 }
 
+//用户列表页
 func (this *MainController) UserList() {
 
 	var (

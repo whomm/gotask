@@ -7,10 +7,6 @@
 2. 任务规模及任务调度低延迟（1ms）
 3. 支持简单协议自定义客户端（客户端可以部署在任意机器）
 4. 任务可以指定进入不同的客户端
-5. 系统不关注的内容
-    1. 用户和用户组的创建
-    2. 用户访问权限控制
-    3. 系统只关注任务和任务运行本身
 # 核心模块
 ### 任务状态迁移
 ```mermaid
@@ -22,7 +18,7 @@ runing-->killing1
 killing1-->killed
 killing1--kill失败-->finsh
 ready-->killing2
-pending-->killing2vv
+pending-->killing2
 killing2-->killed
 ```
 ### 外部接口

@@ -147,14 +147,6 @@ func (p *PManage) RemoveTask(id int64) (int64, error) {
 
 }
 
-/*
-//任务实例生成队列
-var TaskGenerater *PQueue = NewPQueue(MINPQ)
-
-//任务实例运行调度队列
-var TaskRuner *PQueue = NewPQueue(MINPQ)
-*/
-
 //任务实例生成队列
 var TaskGenerater IPQueue = NewDBPQueue("gen")
 
