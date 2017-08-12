@@ -12,7 +12,7 @@ import (
 	"../../modle"
 )
 
-const TASKCTLURL string := "http://127.0.0.1:8911/"
+const TASKCTLURL string = "http://127.0.0.1:8911/"
 
 type MainController struct {
 	baseController
@@ -26,6 +26,7 @@ func (c *MainController) Index() {
 	c.Data["Email"] = "lacing@126.com"
 	c.TplName = "index.tpl"
 }
+
 //
 func (c *MainController) Test() {
 	c.Data["Website"] = "http://github.com/whomm"
@@ -225,6 +226,7 @@ func (this *MainController) TaskSave() {
 	}
 
 }
+
 //任务创建或更新页面
 func (this *MainController) TaskUpdate() {
 
