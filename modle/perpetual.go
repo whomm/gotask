@@ -14,7 +14,9 @@ import (
 	hprose "github.com/hprose/hprose-go"
 )
 
+
 func init() {
+
 
 	//设置最大空闲连接
 	//设置最大数据库连接 (go >= 1.2)
@@ -23,7 +25,6 @@ func init() {
 	// set default database
 	orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("mysqlurls"), maxIdle, maxConn)
 	orm.Debug = false
-
 }
 
 type PManage struct {

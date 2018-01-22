@@ -1,5 +1,5 @@
 rpcport = ":8911"
-mysqlurls = "gotask:246bfb4c65feb99dd4319b53dcd40728@tcp(101.200.72.208:3306)/gotask?charset=utf8"
+mysqlurls = "wwww:123456@tcp(120.25.194.93:8306)/gotask?charset=utf8"
 appname = taskweb
 httpport = 8080
 runmode = dev
