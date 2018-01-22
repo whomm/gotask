@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"time"
 
-	md "./modle"
-	_ "./web/routers"
+	md "github.com/whomm/gotask/modle"
+
+	_ "github.com/whomm/gotask/web/routers"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	_ "github.com/go-sql-driver/mysql"

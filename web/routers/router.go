@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"../controllers"
+	"github.com/whomm/gotask/web/controllers"
 	"github.com/astaxie/beego"
 )
 

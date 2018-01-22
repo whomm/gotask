@@ -9,7 +9,7 @@ import (
 
 	"encoding/json"
 
-	"../../modle"
+	"github.com/whomm/gotask/modle"
 )
 
 const TASKCTLURL string = "http://127.0.0.1:8911/"

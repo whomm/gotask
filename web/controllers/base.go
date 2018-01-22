@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"../../modle"
+	"github.com/whomm/gotask/modle"
 
 	"log"
 

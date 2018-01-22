@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"../../modle"
+	"github.com/whomm/gotask/modle"
 )
 
 type ApiController struct {
