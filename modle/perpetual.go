@@ -12,6 +12,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
 	hprose "github.com/hprose/hprose-go"
+	"sync/atomic"
 )
 
 
@@ -28,6 +29,7 @@ func init() {
 }
 
 type PManage struct {
+	NowStop int32
 }
 
 //获取任务
@@ -161,7 +163,8 @@ func (p *PManage) PushGenerater(t Task) {
 
 //任务实例生成
 func (p *PManage) GeneraterConsume() {
-	for {
+	
+	for atomic.LoadInt32(&p.NowStop) < 0 {
 		headValue, _ := TaskGenerater.Pop()
 		if headValue == nil {
 			logs.Debug("got nil one")
@@ -219,7 +222,7 @@ func (p *PManage) PushRuner(t Task) {
 
 //运行队列的消费者
 func (p *PManage) RunerConsume() {
-	for {
+	for atomic.LoadInt32(&p.NowStop) < 0 {
 		headValue, _ := TaskRuner.Pop()
 		if headValue == nil {
 			//continue

@@ -1,0 +1,82 @@
+{
+	"ImportPath": "github.com/whomm/gotask",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/astaxie/beego",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/config",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/context",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/context/param",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/grace",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/logs",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/orm",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/session",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/toolbox",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/utils",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego/validation",
+			"Comment": "v1.9.0-6-gc5118e9",
+			"Rev": "c5118e9535f237996bae7c7baebe4ed4247cb2c6"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.3-53-g2cc627a",
+			"Rev": "2cc627ac8defc45d65066ae98f898166f580f9a4"
+		},
+		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Comment": "v1.0.0-20-ga69d25b",
+			"Rev": "a69d25be2fe2923a97c2af6849b2f52426f68fc0"
+		},
+		{
+			"ImportPath": "github.com/hprose/hprose-go",
+			"Comment": "v1.5.1-14-g7efa6e2",
+			"Rev": "7efa6e24fedbb701670156ebb5e18fa2d31264b4"
+		},
+		{
+			"ImportPath": "github.com/robfig/cron",
+			"Comment": "v1-36-gab4c16f",
+			"Rev": "ab4c16f3a09641bd19d65f55b3d8d6edda7a8e05"
+		}
+	]
+}

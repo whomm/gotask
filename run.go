@@ -11,6 +11,11 @@ import (
 	"github.com/astaxie/beego/logs"
 	_ "github.com/go-sql-driver/mysql"
 	hprose "github.com/hprose/hprose-go"
+	"sync/atomic"
+	"os/signal"
+	"os"
+	"fmt"
+	"syscall"
 )
 
 func int64todate(in int64) (out string) {
@@ -27,9 +32,10 @@ func init() {
 	logs.SetLogger(logs.AdapterFile, `{"filename":"project.log","level":7,"maxlines":0,"maxsize":0,"daily":true,"maxdays":10}`)
 }
 
+
 func main() {
 
-	pm := md.PManage{}
+	pm := md.PManage{0}
 	go pm.GeneraterConsume()
 	go pm.RunerConsume()
 
@@ -45,8 +51,39 @@ func main() {
 
 	go http.ListenAndServe(":8911", service)
 
+
+
 	beego.AddFuncMap("int64todate", int64todate)
 	beego.AddFuncMap("uinttodate", uinttodate)
 	beego.Run()
 
+	fmt.Println("runhere")
+
+	//创建监听退出chan
+    c := make(chan os.Signal)
+    //监听指定信号 ctrl+c kill
+    signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGUSR1, syscall.SIGUSR2)
+    go func() {
+        for s := range c {
+            switch s {
+			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
+				atomic.AddInt32(&pm.NowStop,1)
+                fmt.Println("退出", s)
+                ExitFunc()
+            case syscall.SIGUSR1:
+                fmt.Println("usr1", s)
+            case syscall.SIGUSR2:
+                fmt.Println("usr2", s)
+            default:
+                fmt.Println("other", s)
+            }
+        }
+    }()
+
+
+
+}
+
+func ExitFunc()  {
+    os.Exit(0)
 }
